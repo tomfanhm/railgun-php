@@ -29,10 +29,10 @@ class Database
      */
     private function connect(): void
     {
-        $DB_HOST = (string) getenv("DB_HOST");
-        $DB_NAME = (string) getenv("DB_NAME");
-        $DB_USER = (string) getenv("DB_USER");
-        $DB_PASS = (string) getenv("DB_PASS");
+        $DB_HOST = getenv("DB_HOST", true);
+        $DB_NAME = getenv("DB_NAME", true);
+        $DB_USER = getenv("DB_USER", true);
+        $DB_PASSWORD = getenv("DB_PASSWORD", true);
 
         $dsn = "mysql:host={$DB_HOST};dbname={$DB_NAME};charset=utf8mb4";
         $options = [
@@ -42,7 +42,7 @@ class Database
         ];
 
         try {
-            $this->db = new \PDO($dsn, $DB_USER, $DB_PASS, $options);
+            $this->db = new \PDO($dsn, $DB_USER, $DB_PASSWORD, $options);
         } catch (\PDOException $e) {
             throw new \Exception("Failed to connect to the database: " . $e->getMessage());
         }
