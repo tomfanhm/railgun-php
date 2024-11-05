@@ -29,10 +29,10 @@ class Database
      */
     private function connect(): void
     {
-        $DB_HOST = getenv("DB_HOST");
-        $DB_NAME = getenv("DB_NAME");
-        $DB_USER = getenv("DB_USER");
-        $DB_PASS = getenv("DB_PASS");
+        $DB_HOST = (string) getenv("DB_HOST");
+        $DB_NAME = (string) getenv("DB_NAME");
+        $DB_USER = (string) getenv("DB_USER");
+        $DB_PASS = (string) getenv("DB_PASS");
 
         $dsn = "mysql:host={$DB_HOST};dbname={$DB_NAME};charset=utf8mb4";
         $options = [
