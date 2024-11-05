@@ -1,0 +1,2 @@
+# This .htaccess file denies access to all users.
+Deny from all

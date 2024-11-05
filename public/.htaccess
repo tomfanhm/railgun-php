@@ -1,0 +1,22 @@
+# .htaccess configuration file for an Apache server.
+#
+# Ensures the mod_rewrite module is enabled.
+# Disables MultiViews to prevent conflicts with URL rewriting.
+# Enables the rewrite engine.
+# Sets the base URL for all rewrite rules to /public.
+# Adds conditions to check if the requested filename is not a file or directory.
+# Rewrites all requests to index.php with the original URL as a query parameter.
+#
+# Rewrite Rules:
+# If the requested resource is not a file or directory, the request is rewritten to index.php.
+# The original URL is passed as a query parameter named 'url'.
+# The QSA,L flags ensure query string append and that this is the last rule.
+
+<IfModule mod_rewrite.c>
+    Options -Multiviews
+    RewriteEngine On
+    RewriteBase /public
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
+</IfModule>

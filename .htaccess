@@ -1,0 +1,21 @@
+# .htaccess Configuration File
+# This .htaccess file is used to configure URL rewriting for an Apache server.
+# It checks if the mod_rewrite module is enabled and then sets up rewrite rules.
+#
+# Rewrite Rules:
+# 1. If the URL path is empty (i.e., the root URL), it rewrites the URL to the 'public/' directory.
+# 2. For any other URL path, it rewrites the URL to the 'public/' directory while preserving the rest of the path.
+#
+# Directives:
+# IfModule mod_rewrite.c: Checks if the mod_rewrite module is enabled.
+# RewriteEngine On: Enables the runtime rewriting engine.
+# RewriteRule ^$ public/ [L]: Redirects the root URL to the 'public/' directory.
+# RewriteRule (.*) public/$1 [L]: Redirects all other URLs to the 'public/' directory, appending the original path.
+#
+# Note: The [L] flag indicates that this is the last rule and no further rules should be processed if this one matches.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^$ public/ [L]
+  RewriteRule (.*) public/$1 [L]
+</IfModule>
