@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Exceptions\DatabaseConnectionException;
+
 class Database
 {
     /**
@@ -44,7 +46,7 @@ class Database
         try {
             $this->db = new \PDO($dsn, $DB_USER, $DB_PASSWORD, $options);
         } catch (\PDOException $e) {
-            throw new \Exception('Failed to connect to the database: ' . $e->getMessage());
+            throw new DatabaseConnectionException();
         }
     }
 

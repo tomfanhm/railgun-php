@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Exceptions\BaseException;
+
 class Application
 {
     /**
@@ -84,8 +86,8 @@ class Application
     {
         try {
             $this->router->resolve();
-        } catch (\Exception $e) {
-            $this->router->abort(500, 'Internal Server Error', $e->getMessage());
+        } catch (BaseException $e) {
+            $this->router->abort($e->getCode(), $e->getMessage(), $e->getDescription());
         }
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Exceptions\JsonEncodingException;
+
 class Response
 {
     /**
@@ -88,7 +90,7 @@ class Response
 
         $json = json_encode($data);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \RuntimeException('JSON encoding error: ' . json_last_error_msg());
+            throw new JsonEncodingException();
         }
 
         $this->setBody($json);

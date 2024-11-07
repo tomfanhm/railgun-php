@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\Controllers\ErrorController;
+use App\Exceptions\CustomException;
+use App\Exceptions\RouteNotFoundException;
 
 class Router
 {
@@ -140,12 +142,12 @@ class Router
 
                     return;
                 } else {
-                    $this->abort(500, 'Internal Server Error', 'Controller or action not found.');
+                    throw new CustomException(500, 'Internal server error', 'The controller or action does not exist.');
                 }
             }
         }
 
-        $this->abort(404, 'Not Found', 'The requested URL was not found on this server.');
+        throw new RouteNotFoundException();
     }
 
     /**
