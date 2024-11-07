@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace App\Controllers;
+
 use App\Core\Controller;
 
 class ErrorController extends Controller
@@ -13,5 +15,7 @@ class ErrorController extends Controller
             'message' => $message,
             'description' => $description,
         ];
+
+        echo $code . ' - ' . $message . ' - ' . $description;
     }
 }

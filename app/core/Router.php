@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Controllers\ErrorController;
+
 class Router
 {
     public Request $request;
@@ -129,15 +131,12 @@ class Router
             $routeParams = $this->matchRoute($routePath, $path);
 
             if ($routeParams !== null) {
-                // Route matched, extract controller and action
-                $controllerName = $route['controller'];
+                $controllerName = 'App\Controllers\\' . $route['controller'];
                 $action = $route['action'];
 
-                // Dynamically instantiate the controller
                 if (class_exists($controllerName) && method_exists($controllerName, $action)) {
-                    $controller = new $controllerName($this->request, $this->response);
-                    // Call the action with route parameters
-                    call_user_func_array([$controller, $action], array_merge([$this->request, $this->response], $routeParams));
+                    $controller = new $controllerName();
+                    call_user_func_array([$controller, $action], $routeParams);
 
                     return;
                 } else {
@@ -146,7 +145,6 @@ class Router
             }
         }
 
-        // No route matched
         $this->abort(404, 'Not Found', 'The requested URL was not found on this server.');
     }
 
@@ -198,8 +196,7 @@ class Router
      */
     public function abort(int $code, string $message, string $description): void
     {
-        require_once Application::$ROOT_DIR . '/app/controllers/ErrorController.php';
-        $controller = new \ErrorController();
+        $controller = new ErrorController();
         $controller->index($code, $message, $description);
     }
 }
