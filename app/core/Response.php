@@ -7,21 +7,21 @@ namespace App\Core;
 class Response
 {
     /**
-     * @var int $statusCode The HTTP status code for the response.
+     * @var int The HTTP status code for the response.
      */
     private int $statusCode;
 
     /**
-     * @var array<string, array<string>> $headers Associative array of headers.
+     * @var array<string, array<string>> Associative array of headers.
      */
     private array $headers = [];
 
     /**
-     * @var string $body The body content of the response.
+     * @var string The body content of the response.
      */
-    private string $body = "";
+    private string $body = '';
 
-    public function __construct(int $statusCode = 200, array $headers = [], string $body = "")
+    public function __construct(int $statusCode = 200, array $headers = [], string $body = '')
     {
         $this->statusCode = $statusCode;
         $this->headers = $headers;
@@ -37,6 +37,7 @@ class Response
     public function setStatusCode(int $statusCode): self
     {
         $this->statusCode = $statusCode;
+
         return $this;
     }
 
@@ -70,6 +71,7 @@ class Response
     public function setBody(string $body): self
     {
         $this->body = $body;
+
         return $this;
     }
 
@@ -82,7 +84,7 @@ class Response
      */
     public function json(mixed $data): self
     {
-        $this->setHeader("Content-Type", "application/json");
+        $this->setHeader('Content-Type', 'application/json');
 
         $json = json_encode($data);
         if (json_last_error() !== JSON_ERROR_NONE) {
@@ -90,6 +92,7 @@ class Response
         }
 
         $this->setBody($json);
+
         return $this;
     }
 
@@ -103,6 +106,7 @@ class Response
     {
         $this->setHeader('Content-Type', 'application/xml');
         $this->setBody($xmlContent);
+
         return $this;
     }
 
@@ -116,6 +120,7 @@ class Response
     {
         $this->setHeader('Content-Type', 'text/html');
         $this->setBody($content);
+
         return $this;
     }
 

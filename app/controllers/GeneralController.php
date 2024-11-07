@@ -6,5 +6,7 @@ use App\Core\Controller;
 
 class GeneralController extends Controller
 {
-    public function home(): void {}
+    public function home(): void
+    {
+    }
 }

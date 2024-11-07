@@ -9,9 +9,9 @@ class ErrorController extends Controller
     public function index(int $code, string $message, string $description): void
     {
         $params = [
-            "code" => (string) $code,
-            "message" => $message,
-            "description" => $description,
+            'code' => (string) $code,
+            'message' => $message,
+            'description' => $description,
         ];
     }
 }

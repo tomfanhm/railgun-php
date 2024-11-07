@@ -74,9 +74,18 @@ class Application
         }
     }
 
+    /**
+     * Runs the application by resolving the current route.
+     * If an exception occurs during route resolution, it aborts with a 500 status code and an error message.
+     *
+     * @return void
+     */
     public function run(): void
     {
-        $this->router->resolve();
-        $this->request->getPath();
+        try {
+            $this->router->resolve();
+        } catch (\Exception $e) {
+            $this->router->abort(500, 'Internal Server Error', $e->getMessage());
+        }
     }
 }

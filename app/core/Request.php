@@ -7,7 +7,7 @@ namespace App\Core;
 class Request
 {
     /**
-     * @var array $headers An array containing the headers from the request.
+     * @var array An array containing the headers from the request.
      */
     private array $headers;
 
@@ -26,11 +26,12 @@ class Request
      */
     public function getPath(): string
     {
-        $path = $_SERVER["REQUEST_URI"] ?? "/";
-        $position = strpos($path, "?");
+        $path = $_SERVER['REQUEST_URI'] ?? '/';
+        $position = strpos($path, '?');
         if ($position === false) {
             return $path;
         }
+
         return substr($path, 0, $position);
     }
 
@@ -41,7 +42,7 @@ class Request
      */
     public function getMethod(): string
     {
-        return strtolower($_SERVER["REQUEST_METHOD"]);
+        return strtolower($_SERVER['REQUEST_METHOD']);
     }
 
     /**
@@ -51,7 +52,7 @@ class Request
      */
     public function isGet(): bool
     {
-        return $this->getMethod() === "get";
+        return $this->getMethod() === 'get';
     }
 
     /**
@@ -61,7 +62,7 @@ class Request
      */
     public function isPost(): bool
     {
-        return $this->getMethod() === "post";
+        return $this->getMethod() === 'post';
     }
 
     /**
@@ -93,7 +94,7 @@ class Request
      */
     public function isAjax(): bool
     {
-        return $this->getHeader("X-Requested-With") === "XMLHttpRequest";
+        return $this->getHeader('X-Requested-With') === 'XMLHttpRequest';
     }
 
     /**
@@ -117,6 +118,7 @@ class Request
                 $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
             }
         }
+
         return $body;
     }
 }

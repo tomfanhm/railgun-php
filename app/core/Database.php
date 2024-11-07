@@ -7,12 +7,12 @@ namespace App\Core;
 class Database
 {
     /**
-     * @var \PDO $db The PDO instance for database connection.
+     * @var \PDO The PDO instance for database connection.
      */
     protected \PDO $db;
 
     /**
-     * @var \PDOStatement|null $stmt The PDOStatement instance for executing SQL queries.
+     * @var \PDOStatement|null The PDOStatement instance for executing SQL queries.
      */
     protected ?\PDOStatement $stmt = null;
 
@@ -29,10 +29,10 @@ class Database
      */
     private function connect(): void
     {
-        $DB_HOST = getenv("DB_HOST", true);
-        $DB_NAME = getenv("DB_NAME", true);
-        $DB_USER = getenv("DB_USER", true);
-        $DB_PASSWORD = getenv("DB_PASSWORD", true);
+        $DB_HOST = getenv('DB_HOST', true);
+        $DB_NAME = getenv('DB_NAME', true);
+        $DB_USER = getenv('DB_USER', true);
+        $DB_PASSWORD = getenv('DB_PASSWORD', true);
 
         $dsn = "mysql:host={$DB_HOST};dbname={$DB_NAME};charset=utf8mb4";
         $options = [
@@ -44,7 +44,7 @@ class Database
         try {
             $this->db = new \PDO($dsn, $DB_USER, $DB_PASSWORD, $options);
         } catch (\PDOException $e) {
-            throw new \Exception("Failed to connect to the database: " . $e->getMessage());
+            throw new \Exception('Failed to connect to the database: ' . $e->getMessage());
         }
     }
 
@@ -57,6 +57,7 @@ class Database
     public function prepare(string $query): self
     {
         $this->stmt = $this->db->prepare($query);
+
         return $this;
     }
 
@@ -79,6 +80,7 @@ class Database
             };
         }
         $this->stmt->bindValue($param, $value, $type);
+
         return $this;
     }
 
@@ -130,6 +132,7 @@ class Database
     public function beginTransaction(): self
     {
         $this->db->beginTransaction();
+
         return $this;
     }
 
@@ -141,6 +144,7 @@ class Database
     public function commit(): self
     {
         $this->db->commit();
+
         return $this;
     }
 
@@ -152,6 +156,7 @@ class Database
     public function rollBack(): self
     {
         $this->db->rollBack();
+
         return $this;
     }
 

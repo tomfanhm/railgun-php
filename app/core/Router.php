@@ -11,7 +11,7 @@ class Router
     /**
      * Stores registered routes, organized by HTTP method and path.
      *
-     * @var array<string, array<string, array<string, string>>> $routes
+     * @var array<string, array<string, array<string, string>>>
      */
     private array $routes = [];
 
@@ -33,7 +33,7 @@ class Router
      */
     private function add(string $path, string $controller, string $action, string $method): void
     {
-        $this->routes[$method][$path] = ["controller" => $controller, "action" => $action];
+        $this->routes[$method][$path] = ['controller' => $controller, 'action' => $action];
     }
 
     /**
@@ -47,7 +47,7 @@ class Router
      */
     public function get(string $path, string $controller, string $action): void
     {
-        $this->add($path, $controller, $action, "get");
+        $this->add($path, $controller, $action, 'get');
     }
 
     /**
@@ -61,7 +61,7 @@ class Router
      */
     public function post(string $path, string $controller, string $action): void
     {
-        $this->add($path, $controller, $action, "post");
+        $this->add($path, $controller, $action, 'post');
     }
 
     /**
@@ -75,7 +75,7 @@ class Router
      */
     public function put(string $path, string $controller, string $action): void
     {
-        $this->add($path, $controller, $action, "put");
+        $this->add($path, $controller, $action, 'put');
     }
 
     /**
@@ -89,7 +89,7 @@ class Router
      */
     public function delete(string $path, string $controller, string $action): void
     {
-        $this->add($path, $controller, $action, "delete");
+        $this->add($path, $controller, $action, 'delete');
     }
 
     /**
@@ -103,33 +103,102 @@ class Router
      */
     public function any(string $path, string $controller, string $action): void
     {
-        $methods = ["get", "post", "put", "delete", "patch", "options", "head"];
+        $methods = ['get', 'post', 'put', 'delete', 'patch', 'options', 'head'];
         foreach ($methods as $method) {
             $this->add($path, $controller, $action, $method);
         }
     }
 
+    /**
+     * Resolves the current request by matching it against the defined routes.
+     *
+     * This method retrieves the request path and method, then iterates through the routes defined for that method.
+     * If a matching route is found, it extracts the controller and action, instantiates the controller, and calls the action with the route parameters.
+     * If no matching route is found, it sends a 404 response.
+     * If the controller or action is not found, it sends a 500 response.
+     *
+     * @return void
+     */
     public function resolve(): void
     {
         $path = $this->request->getPath();
         $method = $this->request->getMethod();
         $methodRoutes = $this->routes[$method] ?? [];
-        foreach ($methodRoutes as $key => $route) {
+
+        foreach ($methodRoutes as $routePath => $route) {
+            $routeParams = $this->matchRoute($routePath, $path);
+
+            if ($routeParams !== null) {
+                // Route matched, extract controller and action
+                $controllerName = $route['controller'];
+                $action = $route['action'];
+
+                // Dynamically instantiate the controller
+                if (class_exists($controllerName) && method_exists($controllerName, $action)) {
+                    $controller = new $controllerName($this->request, $this->response);
+                    // Call the action with route parameters
+                    call_user_func_array([$controller, $action], array_merge([$this->request, $this->response], $routeParams));
+
+                    return;
+                } else {
+                    $this->abort(500, 'Internal Server Error', 'Controller or action not found.');
+                }
+            }
         }
+
+        // No route matched
+        $this->abort(404, 'Not Found', 'The requested URL was not found on this server.');
+    }
+
+    /**
+     * Matches a given request path against a defined route path and extracts parameters if any.
+     *
+     * @param string $routePath The defined route path, which may contain dynamic segments.
+     * @param string $requestPath The actual request path to match against the route.
+     * @return array|null An associative array of parameters if the paths match, or null if they do not.
+     */
+    private function matchRoute(string $routePath, string $requestPath): ?array
+    {
+        $routeSegments = explode('/', trim($routePath, '/'));
+        $pathSegments = explode('/', trim($requestPath, '/'));
+
+        // Check if the segment counts are the same
+        if (count($routeSegments) !== count($pathSegments)) {
+            return null;
+        }
+
+        $params = [];
+
+        // Compare each segment
+        foreach ($routeSegments as $index => $segment) {
+            if ($segment === $pathSegments[$index]) {
+                // Exact match, continue
+                continue;
+            } elseif (str_starts_with($segment, '{') && str_ends_with($segment, '}')) {
+                // Dynamic segment found, capture as parameter
+                $paramName = trim($segment, '{}');
+                $params[$paramName] = $pathSegments[$index];
+            } else {
+                // Segment mismatch
+                return null;
+            }
+        }
+
+        return $params;
     }
 
     /**
      * Aborts the current process and triggers the error handling mechanism.
-     * 
+     *
      * @param int $code The HTTP status code to be used for the error.
      * @param string $message A brief message describing the error.
      * @param string $description A detailed description of the error.
      *
      * @return void
      */
-    private function abort(int $code, string $message, string $description): void
+    public function abort(int $code, string $message, string $description): void
     {
-        require_once Application::$ROOT_DIR . "/app/controllers/ErrorController.php";
+        require_once Application::$ROOT_DIR . '/app/controllers/ErrorController.php';
         $controller = new \ErrorController();
         $controller->index($code, $message, $description);
     }
